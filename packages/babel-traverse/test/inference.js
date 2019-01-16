@@ -1,9 +1,9 @@
 import traverse from "../lib";
-import { parse } from "babylon";
+import { parse } from "@babel/parser";
 import * as t from "@babel/types";
 
 function getPath(code) {
-  const ast = parse(code, { plugins: ["flow", "asyncGenerators"] });
+  const ast = parse(code, { plugins: ["flow"] });
   let path;
   traverse(ast, {
     Program: function(_path) {

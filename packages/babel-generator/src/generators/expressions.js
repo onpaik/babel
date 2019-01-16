@@ -5,7 +5,9 @@ export function UnaryExpression(node: Object) {
   if (
     node.operator === "void" ||
     node.operator === "delete" ||
-    node.operator === "typeof"
+    node.operator === "typeof" ||
+    // throwExpressions
+    node.operator === "throw"
   ) {
     this.word(node.operator);
     this.space();
@@ -67,6 +69,7 @@ export function NewExpression(node: Object, parent: Object) {
     return;
   }
 
+  this.print(node.typeArguments, node); // Flow
   this.print(node.typeParameters, node); // TS
 
   if (node.optional) {
@@ -125,6 +128,7 @@ export function OptionalMemberExpression(node: Object) {
 export function OptionalCallExpression(node: Object) {
   this.print(node.callee, node);
 
+  this.print(node.typeArguments, node); // Flow
   this.print(node.typeParameters, node); // TS
 
   if (node.optional) {
@@ -138,6 +142,7 @@ export function OptionalCallExpression(node: Object) {
 export function CallExpression(node: Object) {
   this.print(node.callee, node);
 
+  this.print(node.typeArguments, node); // Flow
   this.print(node.typeParameters, node); // TS
   this.token("(");
   this.printList(node.arguments, node);

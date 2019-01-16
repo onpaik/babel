@@ -10,6 +10,7 @@ function test(sourceType, opts, initializer, expectedCode) {
   }
 
   const result = babel.transform("", {
+    cwd: __dirname,
     sourceType,
     filename: "example" + (sourceType === "module" ? ".mjs" : ".js"),
     babelrc: false,
@@ -17,7 +18,12 @@ function test(sourceType, opts, initializer, expectedCode) {
       function({ types: t }) {
         return {
           pre(file) {
-            file.set("helpersNamespace", t.identifier("babelHelpers"));
+            file.set("helperGenerator", name =>
+              t.memberExpression(
+                t.identifier("babelHelpers"),
+                t.identifier(name),
+              ),
+            );
           },
           visitor: {
             Program(path) {

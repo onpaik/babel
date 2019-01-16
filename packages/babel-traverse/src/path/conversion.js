@@ -133,7 +133,7 @@ export function arrowFunctionToExpression({
     this.get("body").unshiftContainer(
       "body",
       t.expressionStatement(
-        t.callExpression(this.hub.file.addHelper("newArrowCheck"), [
+        t.callExpression(this.hub.addHelper("newArrowCheck"), [
           t.thisExpression(),
           checkBinding
             ? t.identifier(checkBinding.name)
@@ -461,9 +461,14 @@ function getThisBinding(thisEnvFn, inConstructor) {
         if (supers.has(child.node)) return;
         supers.add(child.node);
 
-        child.replaceWith(
-          t.assignmentExpression("=", t.identifier(thisBinding), child.node),
-        );
+        child.replaceWithMultiple([
+          child.node,
+          t.assignmentExpression(
+            "=",
+            t.identifier(thisBinding),
+            t.identifier("this"),
+          ),
+        ]);
       },
     });
   });

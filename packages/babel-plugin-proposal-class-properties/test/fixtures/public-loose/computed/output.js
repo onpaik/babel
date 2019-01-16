@@ -17,13 +17,14 @@ var _computed2 = computed();
 var _ref2 = "test" + one;
 
 var _ref3 = /regex/;
-var _bar = bar;
 var _baz = baz;
 var _ref4 = `template${expression}`;
 
 var MyClass =
 /*#__PURE__*/
 function () {
+  "use strict";
+
   function MyClass() {
     babelHelpers.classCallCheck(this, MyClass);
     this[null] = "null";
@@ -31,7 +32,7 @@ function () {
     this[void 0] = "void 0";
     this[_ref3] = "regex";
     this[foo] = "foo";
-    this[_bar] = "bar";
+    this[bar] = "bar";
     this[_baz] = "baz";
     this[`template`] = "template";
     this[_ref4] = "template-with-expression";

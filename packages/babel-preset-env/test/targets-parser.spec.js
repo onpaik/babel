@@ -1,3 +1,4 @@
+import browserslist from "browserslist";
 import getTargets from "../lib/targets-parser";
 
 describe("getTargets", () => {
@@ -16,6 +17,45 @@ describe("getTargets", () => {
       firefox: "55.0.0",
       ie: "9.0.0",
       node: "6.10.0",
+    });
+  });
+
+  it("does not clobber browserslists defaults", () => {
+    const browserslistDefaults = browserslist.defaults;
+
+    getTargets({
+      browsers: "chrome 56, ie 11, firefox 51, safari 9",
+    });
+
+    expect(browserslist.defaults).toEqual(browserslistDefaults);
+  });
+
+  describe("validation", () => {
+    it("throws on invalid target name", () => {
+      const invalidTargetName = () => {
+        getTargets({
+          unknown: "unknown",
+        });
+      };
+      expect(invalidTargetName).toThrow();
+    });
+
+    it("throws on invalid browsers target", () => {
+      const invalidBrowsersTarget = () => {
+        getTargets({
+          browsers: 59,
+        });
+      };
+      expect(invalidBrowsersTarget).toThrow();
+    });
+
+    it("throws on invalid target version", () => {
+      const invalidTargetVersion = () => {
+        getTargets({
+          chrome: "unknown",
+        });
+      };
+      expect(invalidTargetVersion).toThrow();
     });
   });
 
@@ -46,6 +86,58 @@ describe("getTargets", () => {
       });
     });
 
+    it("works with node versions", () => {
+      expect(
+        getTargets({
+          browsers: "node 8.5",
+        }),
+      ).toEqual({
+        node: "8.5.0",
+      });
+    });
+
+    it("works with current node version and string type browsers", () => {
+      expect(
+        getTargets({
+          browsers: "current node, chrome 55, opera 42",
+        }),
+      ).toEqual({
+        node: process.versions.node,
+        chrome: "55.0.0",
+        opera: "42.0.0",
+      });
+    });
+
+    it("does throws on unsupported versions", () => {
+      expect(() => {
+        getTargets({
+          browsers: "node 15.0.0, chrome 1000",
+        });
+      }).toThrow();
+    });
+
+    it("works with current node version and array type browsers", () => {
+      expect(
+        getTargets({
+          browsers: ["ie 11", "current node", "chrome 55"],
+        }),
+      ).toEqual({
+        node: process.versions.node,
+        chrome: "55.0.0",
+        ie: "11.0.0",
+      });
+    });
+
+    it("prefers released version over TP", () => {
+      expect(
+        getTargets({
+          browsers: "safari tp, safari 11",
+        }),
+      ).toEqual({
+        safari: "11.0.0",
+      });
+    });
+
     it("returns TP version in lower case", () => {
       expect(
         getTargets({
@@ -56,18 +148,23 @@ describe("getTargets", () => {
       });
     });
 
-    it("ignores invalid", () => {
+    it("works with android", () => {
       expect(
         getTargets({
-          browsers: 59,
-          chrome: "49",
-          firefox: "55",
-          ie: "11",
+          browsers: "Android 4",
         }),
       ).toEqual({
-        chrome: "49.0.0",
-        firefox: "55.0.0",
-        ie: "11.0.0",
+        android: "4.0.0",
+      });
+    });
+
+    it("works with inequalities", () => {
+      expect(
+        getTargets({
+          browsers: "Android >= 4",
+        }),
+      ).toEqual({
+        android: "4.0.0",
       });
     });
   });
@@ -82,6 +179,7 @@ describe("getTargets", () => {
         chrome: "61.0.0",
         safari: "10.1.0",
         firefox: "60.0.0",
+        opera: "48.0.0",
         ios: "10.3.0",
         edge: "16.0.0",
       });
@@ -97,6 +195,7 @@ describe("getTargets", () => {
         chrome: "61.0.0",
         safari: "10.1.0",
         firefox: "60.0.0",
+        opera: "48.0.0",
         ios: "10.3.0",
         edge: "16.0.0",
       });
@@ -112,6 +211,7 @@ describe("getTargets", () => {
         chrome: "61.0.0",
         safari: "10.1.0",
         firefox: "60.0.0",
+        opera: "48.0.0",
         ios: "10.3.0",
         ie: "11.0.0",
         edge: "16.0.0",
@@ -132,6 +232,7 @@ describe("getTargets", () => {
         ie: "11.0.0",
         edge: "16.0.0",
         firefox: "60.0.0",
+        opera: "48.0.0",
       });
     });
   });

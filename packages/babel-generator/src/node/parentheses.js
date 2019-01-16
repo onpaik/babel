@@ -166,6 +166,7 @@ export function YieldExpression(node: Object, parent: Object): boolean {
     t.isCallExpression(parent) ||
     t.isMemberExpression(parent) ||
     t.isNewExpression(parent) ||
+    (t.isAwaitExpression(parent) && t.isYieldExpression(node)) ||
     (t.isConditionalExpression(parent) && node === parent.test) ||
     isClassExtendsClause(node, parent)
   );
@@ -209,6 +210,7 @@ export function ConditionalExpression(node: Object, parent: Object): boolean {
     t.isBinary(parent) ||
     t.isConditionalExpression(parent, { test: node }) ||
     t.isAwaitExpression(parent) ||
+    t.isOptionalMemberExpression(parent) ||
     t.isTaggedTemplateExpression(parent) ||
     t.isTSTypeAssertion(parent) ||
     t.isTSAsExpression(parent)
@@ -217,6 +219,13 @@ export function ConditionalExpression(node: Object, parent: Object): boolean {
   }
 
   return UnaryLike(node, parent);
+}
+
+export function OptionalMemberExpression(
+  node: Object,
+  parent: Object,
+): boolean {
+  return t.isCallExpression(parent) || t.isMemberExpression(parent);
 }
 
 export function AssignmentExpression(node: Object): boolean {

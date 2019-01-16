@@ -37,6 +37,12 @@ export default function cloneNode<T: Object>(node: T, deep: boolean = true): T {
   // Special-case identifiers since they are the most cloned nodes.
   if (type === "Identifier") {
     newNode.name = node.name;
+
+    if (has(node, "typeAnnotation")) {
+      newNode.typeAnnotation = deep
+        ? cloneIfNodeOrArray(node.typeAnnotation, true)
+        : node.typeAnnotation;
+    }
   } else if (!has(NODE_FIELDS, type)) {
     throw new Error(`Unknown node type: "${type}"`);
   } else {
@@ -62,7 +68,9 @@ export default function cloneNode<T: Object>(node: T, deep: boolean = true): T {
     newNode.trailingComments = node.trailingComments;
   }
   if (has(node, "extra")) {
-    newNode.extra = Object.assign({}, node.extra);
+    newNode.extra = {
+      ...node.extra,
+    };
   }
 
   return newNode;

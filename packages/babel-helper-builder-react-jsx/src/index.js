@@ -19,6 +19,13 @@ You can turn on the 'throwIfNamespace' flag to bypass this warning.`,
       );
     }
   };
+
+  visitor.JSXSpreadChild = function(path) {
+    throw path.buildCodeFrameError(
+      "Spread children are not supported in React.",
+    );
+  };
+
   visitor.JSXElement = {
     exit(path, file) {
       const callExpr = buildElementCall(path, file);
@@ -89,14 +96,14 @@ You can turn on the 'throwIfNamespace' flag to bypass this warning.`,
       }
     }
 
-    if (t.isValidIdentifier(node.name.name)) {
+    if (t.isJSXNamespacedName(node.name)) {
+      node.name = t.stringLiteral(
+        node.name.namespace.name + ":" + node.name.name.name,
+      );
+    } else if (esutils.keyword.isIdentifierNameES6(node.name.name)) {
       node.name.type = "Identifier";
     } else {
-      node.name = t.stringLiteral(
-        t.isJSXNamespacedName(node.name)
-          ? node.name.namespace.name + ":" + node.name.name.name
-          : node.name.name,
-      );
+      node.name = t.stringLiteral(node.name.name);
     }
 
     return t.inherits(t.objectProperty(node.name, value), node);

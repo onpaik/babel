@@ -1,11 +1,9 @@
 {
   "root": true,
   "extends": "babel",
-  "plugins": ["prettier"],
+  "plugins": ["prettier", "@babel/development"],
   "rules": {
-    "curly": ["error", "multi-line"],
-    "prettier/prettier": "error",
-    "no-case-declarations": "error"
+    "prettier/prettier": "error"
   },
   "env": {
     "node": true
@@ -14,8 +12,8 @@
     {
       "files": ["packages/*/src/**/*.js", "codemods/*/src/**/*.js"],
       "rules": {
-        "no-undefined-identifier": "error",
-        "no-deprecated-clone": "error"
+        "@babel/development/no-undefined-identifier": "error",
+        "@babel/development/no-deprecated-clone": "error"
       }
     },
     {
@@ -27,6 +25,13 @@
       ],
       "env": {
         "jest": true
+      }
+    },
+    {
+      "files": ["packages/babel-plugin-*/src/index.js"],
+      "excludedFiles": ["packages/babel-plugin-transform-regenerator/**/*.js"],
+      "rules": {
+        "@babel/development/plugin-name": "error"
       }
     }
   ]

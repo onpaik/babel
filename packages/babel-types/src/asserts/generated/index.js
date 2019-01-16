@@ -27,6 +27,12 @@ export function assertAssignmentExpression(
 export function assertBinaryExpression(node: Object, opts?: Object = {}): void {
   assert("BinaryExpression", node, opts);
 }
+export function assertInterpreterDirective(
+  node: Object,
+  opts?: Object = {},
+): void {
+  assert("InterpreterDirective", node, opts);
+}
 export function assertDirective(node: Object, opts?: Object = {}): void {
   assert("Directive", node, opts);
 }
@@ -414,6 +420,12 @@ export function assertInterfaceDeclaration(
 ): void {
   assert("InterfaceDeclaration", node, opts);
 }
+export function assertInterfaceTypeAnnotation(
+  node: Object,
+  opts?: Object = {},
+): void {
+  assert("InterfaceTypeAnnotation", node, opts);
+}
 export function assertIntersectionTypeAnnotation(
   node: Object,
   opts?: Object = {},
@@ -455,6 +467,12 @@ export function assertObjectTypeAnnotation(
   opts?: Object = {},
 ): void {
   assert("ObjectTypeAnnotation", node, opts);
+}
+export function assertObjectTypeInternalSlot(
+  node: Object,
+  opts?: Object = {},
+): void {
+  assert("ObjectTypeInternalSlot", node, opts);
 }
 export function assertObjectTypeCallProperty(
   node: Object,
@@ -657,6 +675,24 @@ export function assertOptionalMemberExpression(
 ): void {
   assert("OptionalMemberExpression", node, opts);
 }
+export function assertPipelineTopicExpression(
+  node: Object,
+  opts?: Object = {},
+): void {
+  assert("PipelineTopicExpression", node, opts);
+}
+export function assertPipelineBareFunction(
+  node: Object,
+  opts?: Object = {},
+): void {
+  assert("PipelineBareFunction", node, opts);
+}
+export function assertPipelinePrimaryTopicReference(
+  node: Object,
+  opts?: Object = {},
+): void {
+  assert("PipelinePrimaryTopicReference", node, opts);
+}
 export function assertOptionalCallExpression(
   node: Object,
   opts?: Object = {},
@@ -668,6 +704,12 @@ export function assertClassPrivateProperty(
   opts?: Object = {},
 ): void {
   assert("ClassPrivateProperty", node, opts);
+}
+export function assertClassPrivateMethod(
+  node: Object,
+  opts?: Object = {},
+): void {
+  assert("ClassPrivateMethod", node, opts);
 }
 export function assertImport(node: Object, opts?: Object = {}): void {
   assert("Import", node, opts);
@@ -692,6 +734,9 @@ export function assertExportNamespaceSpecifier(
 }
 export function assertPrivateName(node: Object, opts?: Object = {}): void {
   assert("PrivateName", node, opts);
+}
+export function assertBigIntLiteral(node: Object, opts?: Object = {}): void {
+  assert("BigIntLiteral", node, opts);
 }
 export function assertTSParameterProperty(
   node: Object,
@@ -740,6 +785,9 @@ export function assertTSIndexSignature(node: Object, opts?: Object = {}): void {
 }
 export function assertTSAnyKeyword(node: Object, opts?: Object = {}): void {
   assert("TSAnyKeyword", node, opts);
+}
+export function assertTSUnknownKeyword(node: Object, opts?: Object = {}): void {
+  assert("TSUnknownKeyword", node, opts);
 }
 export function assertTSNumberKeyword(node: Object, opts?: Object = {}): void {
   assert("TSNumberKeyword", node, opts);
@@ -800,6 +848,12 @@ export function assertTSArrayType(node: Object, opts?: Object = {}): void {
 }
 export function assertTSTupleType(node: Object, opts?: Object = {}): void {
   assert("TSTupleType", node, opts);
+}
+export function assertTSOptionalType(node: Object, opts?: Object = {}): void {
+  assert("TSOptionalType", node, opts);
+}
+export function assertTSRestType(node: Object, opts?: Object = {}): void {
+  assert("TSRestType", node, opts);
 }
 export function assertTSUnionType(node: Object, opts?: Object = {}): void {
   assert("TSUnionType", node, opts);
@@ -884,6 +938,9 @@ export function assertTSModuleDeclaration(
 }
 export function assertTSModuleBlock(node: Object, opts?: Object = {}): void {
   assert("TSModuleBlock", node, opts);
+}
+export function assertTSImportType(node: Object, opts?: Object = {}): void {
+  assert("TSImportType", node, opts);
 }
 export function assertTSImportEqualsDeclaration(
   node: Object,

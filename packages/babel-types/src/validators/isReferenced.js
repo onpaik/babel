@@ -46,6 +46,7 @@ export default function isReferenced(node: Object, parent: Object): boolean {
     // no: class { NODE() {} }
     // yes: class { [NODE]() {} }
     case "ClassMethod":
+    case "ClassPrivateMethod":
     case "ObjectMethod":
       if (parent.key === node) {
         return !!parent.computed;
@@ -78,6 +79,10 @@ export default function isReferenced(node: Object, parent: Object): boolean {
 
     // no: function foo(...NODE) {}
     case "RestElement":
+      return false;
+
+    case "BreakStatement":
+    case "ContinueStatement":
       return false;
 
     // no: function NODE() {}
@@ -116,6 +121,11 @@ export default function isReferenced(node: Object, parent: Object): boolean {
     // no: NODE.target
     case "MetaProperty":
       return false;
+
+    // yes: type X = { somePropert: NODE }
+    // no: type X = { NODE: OtherType }
+    case "ObjectTypeProperty":
+      return parent.key !== node;
   }
 
   return true;

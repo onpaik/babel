@@ -17,6 +17,10 @@ export function BinaryExpression(...args: Array<any>): Object {
   return builder("BinaryExpression", ...args);
 }
 export { BinaryExpression as binaryExpression };
+export function InterpreterDirective(...args: Array<any>): Object {
+  return builder("InterpreterDirective", ...args);
+}
+export { InterpreterDirective as interpreterDirective };
 export function Directive(...args: Array<any>): Object {
   return builder("Directive", ...args);
 }
@@ -393,6 +397,10 @@ export function InterfaceDeclaration(...args: Array<any>): Object {
   return builder("InterfaceDeclaration", ...args);
 }
 export { InterfaceDeclaration as interfaceDeclaration };
+export function InterfaceTypeAnnotation(...args: Array<any>): Object {
+  return builder("InterfaceTypeAnnotation", ...args);
+}
+export { InterfaceTypeAnnotation as interfaceTypeAnnotation };
 export function IntersectionTypeAnnotation(...args: Array<any>): Object {
   return builder("IntersectionTypeAnnotation", ...args);
 }
@@ -421,6 +429,10 @@ export function ObjectTypeAnnotation(...args: Array<any>): Object {
   return builder("ObjectTypeAnnotation", ...args);
 }
 export { ObjectTypeAnnotation as objectTypeAnnotation };
+export function ObjectTypeInternalSlot(...args: Array<any>): Object {
+  return builder("ObjectTypeInternalSlot", ...args);
+}
+export { ObjectTypeInternalSlot as objectTypeInternalSlot };
 export function ObjectTypeCallProperty(...args: Array<any>): Object {
   return builder("ObjectTypeCallProperty", ...args);
 }
@@ -600,6 +612,18 @@ export function OptionalMemberExpression(...args: Array<any>): Object {
   return builder("OptionalMemberExpression", ...args);
 }
 export { OptionalMemberExpression as optionalMemberExpression };
+export function PipelineTopicExpression(...args: Array<any>): Object {
+  return builder("PipelineTopicExpression", ...args);
+}
+export { PipelineTopicExpression as pipelineTopicExpression };
+export function PipelineBareFunction(...args: Array<any>): Object {
+  return builder("PipelineBareFunction", ...args);
+}
+export { PipelineBareFunction as pipelineBareFunction };
+export function PipelinePrimaryTopicReference(...args: Array<any>): Object {
+  return builder("PipelinePrimaryTopicReference", ...args);
+}
+export { PipelinePrimaryTopicReference as pipelinePrimaryTopicReference };
 export function OptionalCallExpression(...args: Array<any>): Object {
   return builder("OptionalCallExpression", ...args);
 }
@@ -608,6 +632,10 @@ export function ClassPrivateProperty(...args: Array<any>): Object {
   return builder("ClassPrivateProperty", ...args);
 }
 export { ClassPrivateProperty as classPrivateProperty };
+export function ClassPrivateMethod(...args: Array<any>): Object {
+  return builder("ClassPrivateMethod", ...args);
+}
+export { ClassPrivateMethod as classPrivateMethod };
 export function Import(...args: Array<any>): Object {
   return builder("Import", ...args);
 }
@@ -632,6 +660,10 @@ export function PrivateName(...args: Array<any>): Object {
   return builder("PrivateName", ...args);
 }
 export { PrivateName as privateName };
+export function BigIntLiteral(...args: Array<any>): Object {
+  return builder("BigIntLiteral", ...args);
+}
+export { BigIntLiteral as bigIntLiteral };
 export function TSParameterProperty(...args: Array<any>): Object {
   return builder("TSParameterProperty", ...args);
 }
@@ -682,6 +714,11 @@ export function TSAnyKeyword(...args: Array<any>): Object {
 }
 export { TSAnyKeyword as tsAnyKeyword };
 export { TSAnyKeyword as tSAnyKeyword };
+export function TSUnknownKeyword(...args: Array<any>): Object {
+  return builder("TSUnknownKeyword", ...args);
+}
+export { TSUnknownKeyword as tsUnknownKeyword };
+export { TSUnknownKeyword as tSUnknownKeyword };
 export function TSNumberKeyword(...args: Array<any>): Object {
   return builder("TSNumberKeyword", ...args);
 }
@@ -772,6 +809,16 @@ export function TSTupleType(...args: Array<any>): Object {
 }
 export { TSTupleType as tsTupleType };
 export { TSTupleType as tSTupleType };
+export function TSOptionalType(...args: Array<any>): Object {
+  return builder("TSOptionalType", ...args);
+}
+export { TSOptionalType as tsOptionalType };
+export { TSOptionalType as tSOptionalType };
+export function TSRestType(...args: Array<any>): Object {
+  return builder("TSRestType", ...args);
+}
+export { TSRestType as tsRestType };
+export { TSRestType as tSRestType };
 export function TSUnionType(...args: Array<any>): Object {
   return builder("TSUnionType", ...args);
 }
@@ -867,6 +914,11 @@ export function TSModuleBlock(...args: Array<any>): Object {
 }
 export { TSModuleBlock as tsModuleBlock };
 export { TSModuleBlock as tSModuleBlock };
+export function TSImportType(...args: Array<any>): Object {
+  return builder("TSImportType", ...args);
+}
+export { TSImportType as tsImportType };
+export { TSImportType as tSImportType };
 export function TSImportEqualsDeclaration(...args: Array<any>): Object {
   return builder("TSImportEqualsDeclaration", ...args);
 }

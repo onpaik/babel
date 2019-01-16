@@ -1,9 +1,11 @@
 export default {
   "syntax-async-generators": require("@babel/plugin-syntax-async-generators"),
+  "syntax-json-strings": require("@babel/plugin-syntax-json-strings"),
   "syntax-object-rest-spread": require("@babel/plugin-syntax-object-rest-spread"),
   "syntax-optional-catch-binding": require("@babel/plugin-syntax-optional-catch-binding"),
   "transform-async-to-generator": require("@babel/plugin-transform-async-to-generator"),
   "proposal-async-generator-functions": require("@babel/plugin-proposal-async-generator-functions"),
+  "proposal-json-strings": require("@babel/plugin-proposal-json-strings"),
   "transform-arrow-functions": require("@babel/plugin-transform-arrow-functions"),
   "transform-block-scoped-functions": require("@babel/plugin-transform-block-scoped-functions"),
   "transform-block-scoping": require("@babel/plugin-transform-block-scoping"),

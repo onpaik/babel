@@ -1,8 +1,8 @@
 {
-  "lerna": "2.0.0-rc.4",
-  "version": "7.0.0-beta.44",
+  "version": "7.2.5",
   "changelog": {
     "repo": "babel/babel",
+    "cacheDir": ".changelog",
     "labels": {
       "PR: Spec Compliancy :eyeglasses:": ":eyeglasses: Spec Compliancy",
       "PR: Breaking Change :boom:": ":boom: Breaking Change",
@@ -13,19 +13,21 @@
       "PR: Internal :house:": ":house: Internal"
     }
   },
-  "cacheDir": ".changelog",
-  "commands": {
+  "command": {
     "publish": {
-      "ignore": [
+      "ignoreChanges": [
         "*.md",
+        "*.txt",
         "test/**",
-        "codemods/**"
+        "codemods/**",
+        "# We ignore every JSON file, except for built-in-modules, built-ins and plugins defined in babel-preset-env/data.",
+        "@(!(built-in-modules|built-ins|plugins)).json"
       ]
     }
   },
   "packages": [
-    "packages/*",
-    "codemods/*"
+    "codemods/*",
+    "packages/*"
   ],
   "npmClient": "yarn",
   "npmClientArgs": [

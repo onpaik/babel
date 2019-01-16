@@ -1,5 +1,5 @@
 import traverse from "../lib";
-import { parse } from "babylon";
+import { parse } from "@babel/parser";
 
 function getPath(code) {
   const ast = parse(code);
@@ -38,6 +38,29 @@ describe("evaluation", function() {
         .get("body.0.body.body.0.declarations.1.init")
         .evaluate().confident,
     ).toBe(false);
+  });
+
+  it("should short-circuit && and ||", function() {
+    expect(
+      getPath("x === 'y' || 42")
+        .get("body")[0]
+        .evaluate().confident,
+    ).toBe(false);
+    expect(
+      getPath("x === 'y' && 0")
+        .get("body")[0]
+        .evaluate().confident,
+    ).toBe(false);
+    expect(
+      getPath("42 || x === 'y'")
+        .get("body")[0]
+        .evaluate().value,
+    ).toBe(42);
+    expect(
+      getPath("0 && x === 'y'")
+        .get("body")[0]
+        .evaluate().value,
+    ).toBe(0);
   });
 
   it("should work with repeated, indeterminate identifiers", function() {

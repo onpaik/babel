@@ -5,7 +5,10 @@ import defineType, {
   assertValueType,
   chain,
 } from "./utils";
-import { classMethodOrPropertyCommon } from "./es2015";
+import {
+  classMethodOrPropertyCommon,
+  classMethodOrDeclareMethodCommon,
+} from "./es2015";
 
 defineType("AwaitExpression", {
   builder: ["argument"],
@@ -86,8 +89,32 @@ defineType("OptionalMemberExpression", {
   },
 });
 
+defineType("PipelineTopicExpression", {
+  builder: ["expression"],
+  visitor: ["expression"],
+  fields: {
+    expression: {
+      validate: assertNodeType("Expression"),
+    },
+  },
+});
+
+defineType("PipelineBareFunction", {
+  builder: ["callee"],
+  visitor: ["callee"],
+  fields: {
+    callee: {
+      validate: assertNodeType("Expression"),
+    },
+  },
+});
+
+defineType("PipelinePrimaryTopicReference", {
+  aliases: ["Expression"],
+});
+
 defineType("OptionalCallExpression", {
-  visitor: ["callee", "arguments", "typeParameters"],
+  visitor: ["callee", "arguments", "typeParameters", "typeArguments"],
   builder: ["callee", "arguments", "optional"],
   aliases: ["Expression"],
   fields: {
@@ -105,11 +132,12 @@ defineType("OptionalCallExpression", {
     optional: {
       validate: assertValueType("boolean"),
     },
+    typeArguments: {
+      validate: assertNodeType("TypeParameterInstantiation"),
+      optional: true,
+    },
     typeParameters: {
-      validate: assertNodeType(
-        "TypeParameterInstantiation",
-        "TSTypeParameterInstantiation",
-      ),
+      validate: assertNodeType("TSTypeParameterInstantiation"),
       optional: true,
     },
   },
@@ -126,6 +154,28 @@ defineType("ClassPrivateProperty", {
     value: {
       validate: assertNodeType("Expression"),
       optional: true,
+    },
+  },
+});
+
+defineType("ClassPrivateMethod", {
+  builder: ["kind", "key", "params", "body", "static"],
+  visitor: [
+    "key",
+    "params",
+    "body",
+    "decorators",
+    "returnType",
+    "typeParameters",
+  ],
+  aliases: ["Method", "Private", "Function"],
+  fields: {
+    ...classMethodOrDeclareMethodCommon,
+    key: {
+      validate: assertNodeType("PrivateName"),
+    },
+    body: {
+      validate: assertNodeType("BlockStatement"),
     },
   },
 });
@@ -181,4 +231,14 @@ defineType("PrivateName", {
       validate: assertNodeType("Identifier"),
     },
   },
+});
+
+defineType("BigIntLiteral", {
+  builder: ["value"],
+  fields: {
+    value: {
+      validate: assertValueType("string"),
+    },
+  },
+  aliases: ["Expression", "Pureish", "Literal", "Immutable"],
 });

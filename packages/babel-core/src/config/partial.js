@@ -6,9 +6,43 @@ import { mergeOptions } from "./util";
 import { createItemFromDescriptor } from "./item";
 import { buildRootChain, type ConfigContext } from "./config-chain";
 import { getEnv } from "./helpers/environment";
-import { validate, type ValidatedOptions } from "./validation/options";
+import {
+  validate,
+  type ValidatedOptions,
+  type RootMode,
+} from "./validation/options";
 
-import type { ConfigFile, IgnoreFile } from "./files";
+import { findConfigUpwards, type ConfigFile, type IgnoreFile } from "./files";
+
+function resolveRootMode(rootDir: string, rootMode: RootMode): string {
+  switch (rootMode) {
+    case "root":
+      return rootDir;
+
+    case "upward-optional": {
+      const upwardRootDir = findConfigUpwards(rootDir);
+      return upwardRootDir === null ? rootDir : upwardRootDir;
+    }
+
+    case "upward": {
+      const upwardRootDir = findConfigUpwards(rootDir);
+      if (upwardRootDir !== null) return upwardRootDir;
+
+      throw Object.assign(
+        (new Error(
+          `Babel was run with rootMode:"upward" but a root could not ` +
+            `be found when searching upward from "${rootDir}"`,
+        ): any),
+        {
+          code: "BABEL_ROOT_NOT_FOUND",
+          dirname: rootDir,
+        },
+      );
+    }
+    default:
+      throw new Error(`Assertion failure - unknown rootMode value`);
+  }
+}
 
 export default function loadPrivatePartialConfig(
   inputOpts: mixed,
@@ -17,6 +51,7 @@ export default function loadPrivatePartialConfig(
   context: ConfigContext,
   ignore: IgnoreFile | void,
   babelrc: ConfigFile | void,
+  config: ConfigFile | void,
 } | null {
   if (
     inputOpts != null &&
@@ -27,13 +62,28 @@ export default function loadPrivatePartialConfig(
 
   const args = inputOpts ? validate("arguments", inputOpts) : {};
 
-  const { envName = getEnv(), cwd = "." } = args;
+  const {
+    envName = getEnv(),
+    cwd = ".",
+    root: rootDir = ".",
+    rootMode = "root",
+    caller,
+  } = args;
   const absoluteCwd = path.resolve(cwd);
+  const absoluteRootDir = resolveRootMode(
+    path.resolve(absoluteCwd, rootDir),
+    rootMode,
+  );
 
   const context: ConfigContext = {
-    filename: args.filename ? path.resolve(cwd, args.filename) : null,
+    filename:
+      typeof args.filename === "string"
+        ? path.resolve(cwd, args.filename)
+        : undefined,
     cwd: absoluteCwd,
+    root: absoluteRootDir,
     envName,
+    caller,
   };
 
   const configChain = buildRootChain(args, context);
@@ -48,9 +98,13 @@ export default function loadPrivatePartialConfig(
   // passed back to Babel a second time, it will be in the right structure
   // to not change behavior.
   options.babelrc = false;
-  options.envName = envName;
-  options.cwd = absoluteCwd;
+  options.configFile = false;
   options.passPerPreset = false;
+  options.envName = context.envName;
+  options.cwd = context.cwd;
+  options.root = context.root;
+  options.filename =
+    typeof context.filename === "string" ? context.filename : undefined;
 
   options.plugins = configChain.plugins.map(descriptor =>
     createItemFromDescriptor(descriptor),
@@ -64,6 +118,7 @@ export default function loadPrivatePartialConfig(
     context,
     ignore: configChain.ignore,
     babelrc: configChain.babelrc,
+    config: configChain.config,
   };
 }
 
@@ -71,7 +126,7 @@ export function loadPartialConfig(inputOpts: mixed): PartialConfig | null {
   const result = loadPrivatePartialConfig(inputOpts);
   if (!result) return null;
 
-  const { options, babelrc, ignore } = result;
+  const { options, babelrc, ignore, config } = result;
 
   (options.plugins || []).forEach(item => {
     if (item.value instanceof Plugin) {
@@ -86,6 +141,7 @@ export function loadPartialConfig(inputOpts: mixed): PartialConfig | null {
     options,
     babelrc ? babelrc.filepath : undefined,
     ignore ? ignore.filepath : undefined,
+    config ? config.filepath : undefined,
   );
 }
 
@@ -99,15 +155,18 @@ class PartialConfig {
   options: ValidatedOptions;
   babelrc: string | void;
   babelignore: string | void;
+  config: string | void;
 
   constructor(
     options: ValidatedOptions,
     babelrc: string | void,
     ignore: string | void,
+    config: string | void,
   ) {
     this.options = options;
     this.babelignore = ignore;
     this.babelrc = babelrc;
+    this.config = config;
 
     // Freeze since this is a public API and it should be extremely obvious that
     // reassigning properties on here does nothing.
@@ -122,7 +181,7 @@ class PartialConfig {
    * this.babelrc directly.
    */
   hasFilesystemConfig(): boolean {
-    return this.babelrc !== undefined;
+    return this.babelrc !== undefined || this.config !== undefined;
   }
 }
 Object.freeze(PartialConfig.prototype);

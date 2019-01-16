@@ -20,11 +20,15 @@ interface State {
   programPath: any;
 }
 
-export default declare(api => {
+const PARSED_PARAMS = new WeakSet();
+
+export default declare((api, { jsxPragma = "React" }) => {
   api.assertVersion(7);
 
   return {
+    name: "transform-typescript",
     inherits: syntaxTypeScript,
+
     visitor: {
       //"Pattern" alias doesn't include Identifier or RestElement.
       Pattern: visitPattern,
@@ -33,39 +37,42 @@ export default declare(api => {
 
       Program(path, state: State) {
         state.programPath = path;
-      },
 
-      ImportDeclaration(path, state: State) {
-        // Note: this will allow both `import { } from "m"` and `import "m";`.
-        // In TypeScript, the former would be elided.
-        if (path.node.specifiers.length === 0) {
-          return;
-        }
+        // remove type imports
+        for (const stmt of path.get("body")) {
+          if (t.isImportDeclaration(stmt)) {
+            // Note: this will allow both `import { } from "m"` and `import "m";`.
+            // In TypeScript, the former would be elided.
+            if (stmt.node.specifiers.length === 0) {
+              continue;
+            }
 
-        let allElided = true;
-        const importsToRemove: Path<Node>[] = [];
+            let allElided = true;
+            const importsToRemove: Path<Node>[] = [];
 
-        for (const specifier of path.node.specifiers) {
-          const binding = path.scope.getBinding(specifier.local.name);
+            for (const specifier of stmt.node.specifiers) {
+              const binding = stmt.scope.getBinding(specifier.local.name);
 
-          // The binding may not exist if the import node was explicitly
-          // injected by another plugin. Currently core does not do a good job
-          // of keeping scope bindings synchronized with the AST. For now we
-          // just bail if there is no binding, since chances are good that if
-          // the import statement was injected then it wasn't a typescript type
-          // import anyway.
-          if (binding && isImportTypeOnly(binding, state.programPath)) {
-            importsToRemove.push(binding.path);
-          } else {
-            allElided = false;
-          }
-        }
+              // The binding may not exist if the import node was explicitly
+              // injected by another plugin. Currently core does not do a good job
+              // of keeping scope bindings synchronized with the AST. For now we
+              // just bail if there is no binding, since chances are good that if
+              // the import statement was injected then it wasn't a typescript type
+              // import anyway.
+              if (binding && isImportTypeOnly(binding, state.programPath)) {
+                importsToRemove.push(binding.path);
+              } else {
+                allElided = false;
+              }
+            }
 
-        if (allElided) {
-          path.remove();
-        } else {
-          for (const importPath of importsToRemove) {
-            importPath.remove();
+            if (allElided) {
+              stmt.remove();
+            } else {
+              for (const importPath of importsToRemove) {
+                importPath.remove();
+              }
+            }
           }
         }
       },
@@ -93,71 +100,11 @@ export default declare(api => {
         if (node.abstract) node.abstract = null;
         if (node.optional) node.optional = null;
 
-        if (node.kind !== "constructor") {
-          return;
-        }
-
-        // Collect parameter properties
-        const parameterProperties = [];
-        for (const param of node.params) {
-          if (param.type === "TSParameterProperty") {
-            parameterProperties.push(param.parameter);
-          }
-        }
-
-        if (!parameterProperties.length) {
-          return;
-        }
-
-        const assigns = parameterProperties.map(p => {
-          let name;
-          if (t.isIdentifier(p)) {
-            name = p.name;
-          } else if (t.isAssignmentPattern(p) && t.isIdentifier(p.left)) {
-            name = p.left.name;
-          } else {
-            throw path.buildCodeFrameError(
-              "Parameter properties can not be destructuring patterns.",
-            );
-          }
-
-          const assign = t.assignmentExpression(
-            "=",
-            t.memberExpression(t.thisExpression(), t.identifier(name)),
-            t.identifier(name),
-          );
-          return t.expressionStatement(assign);
-        });
-
-        const statements = node.body.body;
-
-        const first = statements[0];
-        const startsWithSuperCall =
-          first !== undefined &&
-          t.isExpressionStatement(first) &&
-          t.isCallExpression(first.expression) &&
-          t.isSuper(first.expression.callee);
-
-        // Make sure to put parameter properties *after* the `super` call.
-        // TypeScript will enforce that a 'super()' call is the first statement
-        // when there are parameter properties.
-        node.body.body = startsWithSuperCall
-          ? [first, ...assigns, ...statements.slice(1)]
-          : [...assigns, ...statements];
-
         // Rest handled by Function visitor
-      },
-
-      TSParameterProperty(path) {
-        path.replaceWith(path.node.parameter);
       },
 
       ClassProperty(path) {
         const { node } = path;
-        if (!node.value) {
-          path.remove();
-          return;
-        }
 
         if (node.accessibility) node.accessibility = null;
         if (node.abstract) node.abstract = null;
@@ -180,10 +127,85 @@ export default declare(api => {
         if (node.abstract) node.abstract = null;
       },
 
-      Class({ node }) {
+      Class(path) {
+        const { node } = path;
+
         if (node.typeParameters) node.typeParameters = null;
         if (node.superTypeParameters) node.superTypeParameters = null;
         if (node.implements) node.implements = null;
+
+        // Similar to the logic in `transform-flow-strip-types`, we need to
+        // handle `TSParameterProperty` and `ClassProperty` here because the
+        // class transform would transform the class, causing more specific
+        // visitors to not run.
+        path.get("body.body").forEach(child => {
+          const childNode = child.node;
+
+          if (t.isClassMethod(childNode, { kind: "constructor" })) {
+            // Collects parameter properties so that we can add an assignment
+            // for each of them in the constructor body
+            //
+            // We use a WeakSet to ensure an assignment for a parameter
+            // property is only added once. This is necessary for cases like
+            // using `transform-classes`, which causes this visitor to run
+            // twice.
+            const parameterProperties = [];
+            for (const param of childNode.params) {
+              if (
+                param.type === "TSParameterProperty" &&
+                !PARSED_PARAMS.has(param.parameter)
+              ) {
+                PARSED_PARAMS.add(param.parameter);
+                parameterProperties.push(param.parameter);
+              }
+            }
+
+            if (parameterProperties.length) {
+              const assigns = parameterProperties.map(p => {
+                let name;
+                if (t.isIdentifier(p)) {
+                  name = p.name;
+                } else if (t.isAssignmentPattern(p) && t.isIdentifier(p.left)) {
+                  name = p.left.name;
+                } else {
+                  throw path.buildCodeFrameError(
+                    "Parameter properties can not be destructuring patterns.",
+                  );
+                }
+
+                const assign = t.assignmentExpression(
+                  "=",
+                  t.memberExpression(t.thisExpression(), t.identifier(name)),
+                  t.identifier(name),
+                );
+                return t.expressionStatement(assign);
+              });
+
+              const statements = childNode.body.body;
+
+              const first = statements[0];
+
+              const startsWithSuperCall =
+                first !== undefined &&
+                t.isExpressionStatement(first) &&
+                t.isCallExpression(first.expression) &&
+                t.isSuper(first.expression.callee);
+
+              // Make sure to put parameter properties *after* the `super`
+              // call. TypeScript will enforce that a 'super()' call is the
+              // first statement when there are parameter properties.
+              childNode.body.body = startsWithSuperCall
+                ? [first, ...assigns, ...statements.slice(1)]
+                : [...assigns, ...statements];
+            }
+          } else if (child.isClassProperty()) {
+            childNode.typeAnnotation = null;
+
+            if (!childNode.value && !childNode.decorators) {
+              child.remove();
+            }
+          }
+        });
       },
 
       Function({ node }) {
@@ -194,6 +216,13 @@ export default declare(api => {
         if (p0 && t.isIdentifier(p0) && p0.name === "this") {
           node.params.shift();
         }
+
+        // We replace `TSParameterProperty` here so that transforms that
+        // rely on a `Function` visitor to deal with arguments, like
+        // `transform-parameters`, work properly.
+        node.params = node.params.map(p => {
+          return p.type === "TSParameterProperty" ? p.parameter : p;
+        });
       },
 
       TSModuleDeclaration(path) {
@@ -236,7 +265,11 @@ export default declare(api => {
       },
 
       TSAsExpression(path) {
-        path.replaceWith(path.node.expression);
+        let { node } = path;
+        do {
+          node = node.expression;
+        } while (t.isTSAsExpression(node));
+        path.replaceWith(node);
       },
 
       TSNonNullExpression(path) {
@@ -248,6 +281,14 @@ export default declare(api => {
       },
 
       NewExpression(path) {
+        path.node.typeParameters = null;
+      },
+
+      JSXOpeningElement(path) {
+        path.node.typeParameters = null;
+      },
+
+      TaggedTemplateExpression(path) {
         path.node.typeParameters = null;
       },
     },
@@ -266,14 +307,17 @@ export default declare(api => {
       }
     }
 
-    if (binding.identifier.name != "React") {
+    if (binding.identifier.name !== jsxPragma) {
       return true;
     }
 
-    // "React" is referenced as a value if there are any JSX elements in the code.
+    // "React" or the JSX pragma is referenced as a value if there are any JSX elements in the code.
     let sourceFileHasJsx = false;
     programPath.traverse({
       JSXElement() {
+        sourceFileHasJsx = true;
+      },
+      JSXFragment() {
         sourceFileHasJsx = true;
       },
     });

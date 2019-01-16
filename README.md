@@ -14,6 +14,7 @@
   <a href="https://codecov.io/github/babel/babel"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/babel/babel/master.svg?maxAge=43200"></a>
   <a href="https://slack.babeljs.io/"><img alt="Slack Status" src="https://slack.babeljs.io/badge.svg"></a>
   <a href="https://www.npmjs.com/package/babel-core"><img alt="npm Downloads" src="https://img.shields.io/npm/dm/babel-core.svg?maxAge=43200"></a>
+  <a href="https://twitter.com/intent/follow?screen_name=babeljs"><img alt="Follow on Twitter" src="https://img.shields.io/twitter/follow/babeljs.svg?style=social&label=Follow"></a>
 </p>
 
 <h2 align="center">Supporting Babel</h2>
@@ -24,12 +25,12 @@
   <a href="https://medium.com/friendship-dot-js/i-peeked-into-my-node-modules-directory-and-you-wont-believe-what-happened-next-b89f63d21558"><img alt="Business Strategy Status" src="https://img.shields.io/badge/business%20model-flavortown-green.svg"></a>
 </p>
 
-Babel is a community-driven project used by many companies and projects, and is maintained by a group of [volunteers](https://babeljs.io/team). If you'd like to help support the future of the project, please consider:
+Babel (pronounced ["babble"](https://soundcloud.com/sebmck/how-to-pronounce-babel))  is a community-driven project used by many companies and projects, and is maintained by a group of [volunteers](https://babeljs.io/team). If you'd like to help support the future of the project, please consider:
 
-- Giving developer time on the project. (Message us on [Twitter](https://twitter.com/babeljs) or [Slack](https://slack.babeljs.io/))
-- [Giving funds by becoming a backer/sponsor on OpenCollective](https://opencollective.com/babel)
+- Giving developer time on the project. (Message us on [Twitter](https://twitter.com/babeljs) or [Slack](https://slack.babeljs.io/) for guidance!)
+- Giving funds by becoming a sponsor (see below)!
 
-## Sponsors
+## Open Collective Sponsors
 
 Become a sponsor and get your logo on our README on Github with a link to your site. [[Become a sponsor](https://opencollective.com/babel#sponsor)]
 
@@ -48,36 +49,15 @@ Become a sponsor and get your logo on our README on Github with a link to your s
   <a href="https://opencollective.com/babel/sponsor/12/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/12/avatar.svg"></a>
   <a href="https://opencollective.com/babel/sponsor/13/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/13/avatar.svg"></a>
   <a href="https://opencollective.com/babel/sponsor/14/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/14/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/15/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/15/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/16/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/16/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/17/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/17/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/18/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/18/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/19/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/19/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/20/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/20/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/21/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/21/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/22/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/22/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/23/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/23/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/24/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/24/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/25/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/25/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/26/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/26/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/27/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/27/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/28/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/28/avatar.svg"></a>
-  <a href="https://opencollective.com/babel/sponsor/29/website" target="_blank"><img src="https://opencollective.com/babel/sponsor/29/avatar.svg"></a>
 
 ## Patreon Sponsors
 
-Become a sponsor and get your logo on our README on Github with a link to your site. [[Become a sponsor](https://opencollective.com/babel#sponsor)]
-
-## Gold
-
-<a href="https://vueschool.io/?babel" target="_blank"><img src="http://new.babeljs.io/img/sponsors/vueschool.png" height="64"></a>
-<a href="https://devrant.com/?babel" target="_blank"><img src="http://new.babeljs.io/img/sponsors/devRant.png" height="64"></a>
+Become a sponsor and get your logo on our README on Github with a link to your site. [[Become a sponsor](https://www.patreon.com/henryzhu)]
 
 ## Bronze
 
-<a href="http://teamextension.io/" target="_blank"><img src="https://teamextension.io/dist/img/logo/te-logo-compact.png" height="64"></a>
-<a href="https://webflow.com/" target="_blank"><img src="https://opencollective.com/proxy/images/?src=https%3A%2F%2Fopencollective-production.s3-us-west-1.amazonaws.com%2F4a5024b0-8cf2-11e7-b1a2-b30b1de1463c.png&height=64"></a>
-<p><a href="https://twitter.com/mikesherov">Mike Sherov</a></p>
+<a href="https://webflow.com" target="_blank"><img src="https://opencollective.com/proxy/images/?src=https%3A%2F%2Fopencollective-production.s3-us-west-1.amazonaws.com%2F4a5024b0-8cf2-11e7-b1a2-b30b1de1463c.png&height=64"></a>
+<a href="https://issuehunt.io" target="_blank"><img src="https://github.com/BoostIO/issuehunt-materials/blob/master/v1/issuehunt-logo-and-word-v1.png?raw=true" height="64"></a>
 
 ## Intro
 
@@ -104,15 +84,15 @@ Try it out at our [REPL](https://babeljs.io/repl/build/master#?code_lz=NoRgNATGD
 
 ### Who maintains Babel?
 
-Mostly a handful of volunteers! Please check out our [team page](https://babeljs.io/team)!
+Mostly a handful of volunteers, funded by you! Please check out our [team page](https://babeljs.io/team)!
 
 ### Looking for support?
 
-For questions and support please visit join our [Slack Community](https://slack.babeljs.io/), ask a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/babeljs), or ping us on [Twitter](https://twitter.com/babeljs).
+For questions and support please join our [Slack Community](https://slack.babeljs.io/) (you can sign-up [here](https://slack.babeljs.io/) for an invite), ask a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/babeljs), or ping us on [Twitter](https://twitter.com/babeljs).
 
 ### Is there a Babel song?
 
-I'm so glad you asked: [Hallelujah —— In Praise of Babel](SONG.md) by [@angus-c](https://github.com/angus-c). Tweet us your recordings!
+I'm so glad you asked: [Hallelujah —— In Praise of Babel](SONG.md) by [@angus-c](https://github.com/angus-c), [audio version](https://youtu.be/40abpedBKK8) by [@swyx](https://twitter.com/@swyx). Tweet us your recordings!
 
 ### Where are the docs?
 

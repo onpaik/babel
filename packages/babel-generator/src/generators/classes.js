@@ -2,8 +2,9 @@ import * as t from "@babel/types";
 
 export function ClassDeclaration(node: Object, parent: Object) {
   if (
-    !t.isExportDefaultDeclaration(parent) &&
-    !t.isExportNamedDeclaration(parent)
+    !this.format.decoratorsBeforeExport ||
+    (!t.isExportDefaultDeclaration(parent) &&
+      !t.isExportNamedDeclaration(parent))
   ) {
     this.printJoin(node.decorators, node);
   }
@@ -123,6 +124,7 @@ export function ClassPrivateProperty(node: Object) {
     this.space();
   }
   this.print(node.key, node);
+  this.print(node.typeAnnotation, node);
   if (node.value) {
     this.space();
     this.token("=");
@@ -133,6 +135,12 @@ export function ClassPrivateProperty(node: Object) {
 }
 
 export function ClassMethod(node: Object) {
+  this._classMethodHead(node);
+  this.space();
+  this.print(node.body, node);
+}
+
+export function ClassPrivateMethod(node: Object) {
   this._classMethodHead(node);
   this.space();
   this.print(node.body, node);

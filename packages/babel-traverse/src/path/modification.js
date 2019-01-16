@@ -14,18 +14,20 @@ export function insertBefore(nodes) {
 
   nodes = this._verifyNodeList(nodes);
 
+  const { parentPath } = this;
+
   if (
-    this.parentPath.isExpressionStatement() ||
-    this.parentPath.isLabeledStatement() ||
-    this.parentPath.isExportNamedDeclaration() ||
-    (this.parentPath.isExportDefaultDeclaration() && this.isDeclaration())
+    parentPath.isExpressionStatement() ||
+    parentPath.isLabeledStatement() ||
+    parentPath.isExportNamedDeclaration() ||
+    (parentPath.isExportDefaultDeclaration() && this.isDeclaration())
   ) {
-    return this.parentPath.insertBefore(nodes);
+    return parentPath.insertBefore(nodes);
   } else if (
     (this.isNodeType("Expression") &&
       this.listKey !== "params" &&
       this.listKey !== "arguments") ||
-    (this.parentPath.isForStatement() && this.key === "init")
+    (parentPath.isForStatement() && this.key === "init")
   ) {
     if (this.node) nodes.push(this.node);
     return this.replaceExpressionWithStatements(nodes);
@@ -96,19 +98,36 @@ export function insertAfter(nodes) {
 
   nodes = this._verifyNodeList(nodes);
 
+  const { parentPath } = this;
   if (
-    this.parentPath.isExpressionStatement() ||
-    this.parentPath.isLabeledStatement() ||
-    this.parentPath.isExportNamedDeclaration() ||
-    (this.parentPath.isExportDefaultDeclaration() && this.isDeclaration())
+    parentPath.isExpressionStatement() ||
+    parentPath.isLabeledStatement() ||
+    parentPath.isExportNamedDeclaration() ||
+    (parentPath.isExportDefaultDeclaration() && this.isDeclaration())
   ) {
-    return this.parentPath.insertAfter(nodes);
+    return parentPath.insertAfter(
+      nodes.map(node => {
+        // Usually after an expression we can safely insert another expression:
+        //   A.insertAfter(B)
+        //     foo = A;  -> foo = (A, B);
+        // If A is an expression statement, it isn't safe anymore so we need to
+        // convert B to an expression statement
+        //     A;        -> A; B // No semicolon! It could break if followed by [!
+        return t.isExpression(node) ? t.expressionStatement(node) : node;
+      }),
+    );
   } else if (
-    this.isNodeType("Expression") ||
-    (this.parentPath.isForStatement() && this.key === "init")
+    (this.isNodeType("Expression") && !this.isJSXElement()) ||
+    (parentPath.isForStatement() && this.key === "init")
   ) {
     if (this.node) {
-      const temp = this.scope.generateDeclaredUidIdentifier();
+      let { scope } = this;
+      // Inserting after the computed key of a method should insert the
+      // temporary binding in the method's parent's scope.
+      if (parentPath.isMethod({ computed: true, key: this.node })) {
+        scope = scope.parent;
+      }
+      const temp = scope.generateDeclaredUidIdentifier();
       nodes.unshift(
         t.expressionStatement(
           t.assignmentExpression("=", t.cloneNode(temp), this.node),

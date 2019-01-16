@@ -13,6 +13,9 @@
 
 const path = require("path");
 const pump = require("pump");
+const chalk = require("chalk");
+const through = require("through2");
+const gutil = require("gulp-util");
 const rename = require("gulp-rename");
 const RootMostResolvePlugin = require("webpack-dependency-suite")
   .RootMostResolvePlugin;
@@ -42,15 +45,6 @@ function webpackBuild(opts) {
             // Use the bundled config so that module syntax is passed through
             // for Webpack.
             envName: "standalone",
-
-            // Some of the node_modules may have their own "babel" section in
-            // their project.json (or a ".babelrc" file). We need to ignore
-            // those as we're using our own Babel options.
-            babelrc: false,
-
-            // We explicitly load the `.babelrc.js` file since searching is
-            // turned off, but we still want to use the main config.
-            extends: "./.babelrc.js",
           },
         },
       ],
@@ -103,6 +97,30 @@ function webpackBuild(opts) {
   });*/
 }
 
+function logUglify() {
+  return through.obj(function(file, enc, callback) {
+    gutil.log(
+      `Minifying '${chalk.cyan(
+        path.relative(path.join(__dirname, ".."), file.path)
+      )}'...`
+    );
+    callback(null, file);
+  });
+}
+
+function logNoUglify() {
+  return through.obj(function(file, enc, callback) {
+    gutil.log(
+      chalk.yellow(
+        `Skipped minification of '${chalk.cyan(
+          path.relative(path.join(__dirname, ".."), file.path)
+        )}' because not publishing`
+      )
+    );
+    callback(null, file);
+  });
+}
+
 function registerStandalonePackageTask(
   gulp,
   name,
@@ -125,8 +143,9 @@ function registerStandalonePackageTask(
         }),
         gulp.dest(standalonePath),
       ].concat(
-        // Minification is super slow, so we skip it in CI.
-        process.env.CI ? [] : uglify(),
+        // Minification is super slow, so we skip it unless we are publishing
+        process.env.IS_PUBLISH ? logUglify() : logNoUglify(),
+        process.env.IS_PUBLISH ? uglify() : [],
         rename({ extname: ".min.js" }),
         gulp.dest(standalonePath)
       ),

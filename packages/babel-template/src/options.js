@@ -44,7 +44,10 @@ export function merge(a: TemplateOpts, b: TemplateOpts): TemplateOpts {
   } = b;
 
   return {
-    parser: Object.assign({}, a.parser, b.parser),
+    parser: {
+      ...a.parser,
+      ...b.parser,
+    },
     placeholderWhitelist,
     placeholderPattern,
     preserveComments,
@@ -61,8 +64,7 @@ export function validate(opts: mixed): TemplateOpts {
     placeholderPattern,
     preserveComments,
     ...parser
-  } =
-    opts || {};
+  } = opts || {};
 
   if (placeholderWhitelist != null && !(placeholderWhitelist instanceof Set)) {
     throw new Error(
